@@ -1,14 +1,12 @@
 import { waterfall, mapSeries } from 'async'
 import exec from './exec'
+import parse from './parse'
 import fs from 'fs'
 
 const run = (context, callback) => {
     waterfall([
       (done) => {
-        fs.readFile(`${context.workdir}/${context.repository}/.trevor.json`, (err, data) => {
-          const trevor = JSON.parse(data.toString())
-          done(err, trevor);
-        })
+        parse(`${context.workdir}/${context.repository}/.trevor.json`, done)
       },
       (trevor, done) => {
         mapSeries(trevor.flow, (flow, done) => {

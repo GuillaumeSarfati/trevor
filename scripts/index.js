@@ -9,7 +9,7 @@ var xhubSecret = "azerty"
 var port = "8080"
 var host = "localhost"
 
-import flow from './flow'
+import flow from './lib/flow'
 //Secret key
 // app.use(xhub({ algorithm: "sha1", secret: xhubSecret }))
 

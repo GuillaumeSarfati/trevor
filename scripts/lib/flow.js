@@ -1,6 +1,7 @@
 
 import { waterfall, mapSeries } from 'async';
 import step from './step';
+import env from './env';
 import init from './init';
 import run from './run';
 import dockerize from './dockerize';
@@ -10,6 +11,10 @@ const flow = (context) => {
   console.time('flow');
 
   waterfall([
+    (done) => {
+      step('Create Context')
+      env(context, done)
+    },
     (done) => {
       step('Initialization')
       init(context, done)
