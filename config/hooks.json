@@ -1,0 +1,10 @@
+[
+  {
+    "id": "redeploy-webhook",
+    "execute-command": "/scripts/github/redeploy.sh"
+  },
+  {
+    "id": "pull_request",
+    "execute-command": "/scripts/github/pull_request.sh"
+  }
+]
