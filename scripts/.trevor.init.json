@@ -1,5 +1,0 @@
-{
-  "flow": [
-    {"cmd": "ls -la  $workdir/$repository"}
-  ]
-}

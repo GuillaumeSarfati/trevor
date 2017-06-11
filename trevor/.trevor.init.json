@@ -1,0 +1,5 @@
+{
+  "flow": [
+    {"cmd": "git clone -q --progress -b $branch https://github.com/$owner/$repository.git $repository"}
+  ]
+}
