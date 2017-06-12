@@ -1,21 +1,23 @@
-FROM almir/webhook
+FROM ubuntu
 
+EXPOSE 8888
 
+# CREDENTIALS SETUP
 
-COPY config/hooks.json /etc/webhook/hooks.json
-COPY scripts /scripts
+RUN apt-get update
+RUN apt-get install git nodejs npm  -y
+RUN apt-get install curl -y
+RUN ln -s /usr/bin/nodejs /usr/bin/node
+RUN npm install -g babel-cli
+
+# CREDENTIAL SUPPORT
 COPY credentials/deploy.github.com /root/.ssh/id_rsa
+RUN chmod 700 /root/.ssh/id_rsa
+RUN ssh -o StrictHostKeyChecking=no git@github.com 2>/dev/null; exit 0
 
-RUN apk update && apk upgrade
-RUN apk add --no-cache bash git openssh nodejs
+# TREVOR SETUP
+COPY trevor /etc/trevor
 
-RUN chmod 755 -R /scripts
-RUN ls -la /scripts
+# GIT CLONE
 
-#RUN mkdir -p /root/.ssh
-#RUN chmod 700 /root/.ssh/id_rsa
-#RUN mkdir -p /var/www/travis
-#RUN ssh -o StrictHostKeyChecking=no git@github.com 2>/dev/null; exit 0
-#RUN git clone git@github.com:GuillaumeSarfati/test-travis.git /var/www/travis
-
-CMD ["-verbose", "-nopanic", "-hooks=/etc/webhook/hooks.json", "-hotreload"]
+CMD ["babel-node", "/etc/trevor"]

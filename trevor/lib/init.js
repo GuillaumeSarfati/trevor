@@ -12,7 +12,7 @@ const run = (context, callback) => {
       (trevor, done) => {
         mapSeries(trevor.flow, (flow, done) => {
           if (!flow.options) flow.options = {};
-          if (!flow.options.cwd) flow.options.cwd = `${context.workdir}/${context.repository}`;
+          if (!flow.options.cwd) flow.options.cwd = `${process.env.workdir}`;
 
           exec(flow.cmd, flow.options, (err, response) => {
             done(err);

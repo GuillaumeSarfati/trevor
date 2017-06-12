@@ -1,0 +1,7 @@
+{
+  "name": "Trevor CI",
+  "description": "Incredible CI Server",
+  "repository": "https://github.com/GuillaumeSarfati/trevor",
+  "logo": "https://node-js-sample.herokuapp.com/node.png",
+  "keywords": ["trevor", "ci"]
+}

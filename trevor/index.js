@@ -1,70 +1,62 @@
-var express = require("express")
-var bodyParser = require("body-parser")
-var xhub = require("express-x-hub")
-var util = require('util')
-var app = express()
-var git = require('gift')
-//Const
-var xhubSecret = "azerty"
-var port = "8080"
-var host = "localhost"
+const express = require('express');
+const bodyParser = require('body-parser');
+const xhub = require('express-x-hub');
+const app = express();
 
-import flow from './lib/flow'
-//Secret key
+const xhubSecret = 'azerty';
+const port = '8888';
+const host = '0.0.0.0';
+
+import flow from './lib/flow';
+
 // app.use(xhub({ algorithm: "sha1", secret: xhubSecret }))
+app.use(bodyParser.json());
 
-// Configure express json
-app.use(bodyParser.json())
-
-// Main : Start the express http server
-var server = app.listen(port, host, function () {
+var server = app.listen(port, host, () => {
   console.log(
-    "App listening at http://%s:%s",
+    'Trevor listening at http://%s:%s',
     server.address().address,
-    server.address().port
-  )
-})
-
-app.get("/health", function (req, res) {
+    server.address().port,
+  );
+});
+app.get('/', (req, res) => {
   res
   .status(200)
-  .send({ status: 200})
-  return
+  .send({
+    status: 200,
+    message: 'Welcome on Trevor CI'
+  });
+});
+app.get('/health', (req, res) => {
+  res
+  .status(200)
+  .send({ status: 200 });
 });
 
 
-// // Add default route
-app.post("/webhook", function (req, res) {
+app.post('/webhook', (req, res) => {
   // if(!req.isXHub){
   //   res.status(400).send('Invalid X-Hub Request')
   //   console.log("Secret key is invalid")
   //   return
   // }
 
-  var command = req.headers["x-github-event"]
+  const command = req.headers['x-github-event'];
 
-  // console.log('------------');
-  // console.log('GITHUB EVENT');
-  // console.log('------------');
-  // console.log(command);
-  // console.log(req.body);
-
-  const payload  = req.body
+  const payload = req.body;
   switch (command) {
 
     case 'push':
       const context = {
-        workdir: '/Users/guillaume/Documents/docker',
         owner: payload.repository.owner.login,
         repository: payload.repository.name,
         branch: payload.ref.split('/').slice(-1)[0],
-      }
+      };
       flow(context);
       break;
 
   }
   res
   .status(200)
-  .send({ status: 200})
-  return
-})
+  .send({ status: 200 });
+});
