@@ -5,6 +5,7 @@ import parse from './parse'
 import fs from 'fs'
 
 const run = (context, callback) => {
+    
     waterfall([
       (done) => {
         parse(`${__dirname}/../.trevor.init.json`, done)

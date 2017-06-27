@@ -1,6 +1,0 @@
-{
-  "flow": [
-    {"cmd": "rm -rf $workdir/$repository"},
-    {"cmd": "git clone -q --progress -b $branch git@github.com:$owner/$repository.git $workdir/$repository"}
-  ]
-}

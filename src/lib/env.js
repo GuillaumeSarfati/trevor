@@ -4,7 +4,7 @@ import parse from './parse';
 
 const context = (context, done) => {
 
-  process.env.workdir = '/tmp'
+  process.env.workdir = '/var/www'
 
   for (let key in context) {
     process.env[key] = context[key]

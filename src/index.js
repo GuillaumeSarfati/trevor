@@ -44,18 +44,22 @@ app.post('/webhook', (req, res) => {
   const command = req.headers['x-github-event'];
 
   const payload = req.body;
-  switch (command) {
 
-    case 'push':
-      const context = {
-        owner: payload.repository.owner.login,
-        repository: payload.repository.name,
-        branch: payload.ref.split('/').slice(-1)[0],
-      };
-      flow(context);
-      break;
-
-  }
+  console.log('--------------');
+  console.log(command, payload);
+  console.log('--------------');
+  flow(command, payload);
+  // switch (command) {
+  //
+  //   case 'push':
+  //     const context = {
+  //       owner: payload.repository.owner.login,
+  //       repository: payload.repository.name,
+  //       branch: payload.ref.split('/').slice(-1)[0],
+  //     };
+  //     break;
+  //
+  // }
   res
   .status(200)
   .send({ status: 200 });
