@@ -12,22 +12,47 @@ const flow = (command, payload) => {
   console.time('flow');
 
   switch (command) {
-    case 'push':
+
+    case 'deployment':
       var context = {
         owner: payload.repository.owner.login,
         repository: payload.repository.name,
-        branch: payload.ref.split('/').slice(-1)[0],
+        branch: 'current',
+        sha: payload.deployment.sha,
+        command,
       };
       context.command = command
       break;
+
     case 'pull_request':
-      var context = {
-        owner: payload.repository.owner.login,
-        repository: payload.repository.name,
-        branch: payload.pull_request.head.ref,
-        sha: payload.pull_request.head.sha,
-      };
-      context.command = command
+
+      switch (payload.action) {
+
+        case 'opened':
+          var context = {
+            owner: payload.repository.owner.login,
+            repository: payload.repository.name,
+            branch: payload.pull_request.head.ref,
+            sha: payload.pull_request.head.sha,
+            command,
+          };
+          break;
+
+        case 'synchronize':
+          var context = {
+            owner: payload.repository.owner.login,
+            repository: payload.repository.name,
+            branch: payload.pull_request.head.ref,
+            sha: payload.pull_request.head.sha,
+            command,
+          };
+          break;
+
+        default:
+          return;
+          break;
+      }
+
       break;
   }
 

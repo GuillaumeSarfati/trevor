@@ -17,7 +17,11 @@ const redirectToDirectory = (context, trevor) => {
             root /var/www/${context.repository}/${context.branch};
             index index.html index.htm index.nginx-debian.html;
 
-            server_name ${context.sha}.faste.ai;
+            server_name ${
+              context.command == 'deployment'
+              ? trevor.hooks[context.command].domain
+              : context.sha + '.' + trevor.hooks[context.command].domain
+            };
 
             location / {
                     try_files $uri $uri/ =404;
@@ -31,7 +35,7 @@ const redirectToPort = (context, trevor) => {
   console.log('REDIRECT TO PORT');
   console.log('******************');
   return (`
-    upstream ${context.sha}-app {
+    upstream ${context.command}-${context.sha} {
           least_conn;
           server ${context.repository}.${context.branch}:${trevor.hooks[context.command].expose} weight=10 max_fails=3 fail_timeout=30s;
     }
@@ -39,10 +43,14 @@ const redirectToPort = (context, trevor) => {
           listen 80;
           listen [::]:80;
 
-          server_name ${context.sha}.faste.ai;
+          server_name ${
+            context.command == 'deployment'
+            ? trevor.hooks[context.command].domain
+            : context.sha + '.' + trevor.hooks[context.command].domain
+          };
 
           location / {
-            proxy_pass http://${context.sha}-app;
+            proxy_pass http://${context.command}-${context.sha};
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection 'upgrade';

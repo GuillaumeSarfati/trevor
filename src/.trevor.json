@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "deployment": {
+      "flow": [
+        {"cmd": "rm -rf $workdir/$repository/$branch"},
+        {"cmd": "git clone -q --progress git@github.com:$owner/$repository.git $workdir/$repository/$branch"}
+      ]
+    },
+    "pull_request": {
+      "flow": [
+        {"cmd": "rm -rf $workdir/$repository/$branch"},
+        {"cmd": "git clone -q --progress -b $branch git@github.com:$owner/$repository.git $workdir/$repository/$branch"}
+      ]
+    }
+  }
+}
