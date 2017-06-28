@@ -14,7 +14,7 @@ const redirectToDirectory = (context, trevor) => {
     server {
             listen 80;
             listen [::]:80;
-            root /var/www/${context.repository}/${context.branch}/{${trevor.hooks[context.command].root};
+            root /var/www/${context.repository}/${context.branch}/${trevor.hooks[context.command].root};
             index ${trevor.hooks[context.command].entrypoint};
 
             server_name ${

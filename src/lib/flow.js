@@ -93,11 +93,11 @@ const flow = (command, payload) => {
       env(context, done)
     },
     (done) => {
-      statuses({
+      statuses([{
        state: "success",
        description: "Trevor create context...",
        context: "Trevor/context"
-      }, context, done)
+     }], context, done)
     },
     (done) => {
       step('Initialization')
@@ -117,21 +117,21 @@ const flow = (command, payload) => {
     },
     (done) => {
       step('Statuses')
-      statuses({
+      statuses([{
        state: "success",
        target_url: `http://${context.sha}.faste.ai/`,
        description: "Trevor is Happy !",
        context: "Trevor/expose"
-      }, context, done)
+     }], context, done)
     },
   ], (err, result) => {
     if (err && command === 'pull_request') {
-      statuses({
+      statuses([{
         state: "error",
         target_url: `http://${context.sha}.faste.ai/`,
         description: "Trevor is not Happy !",
         context: "Trevor/expose"
-      }, context, (err, response) => {
+      }], context, (err, response) => {
         console.log(err, response);
       })
 
