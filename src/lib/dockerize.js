@@ -66,11 +66,13 @@ const dockerize = (context, callback) => {
         Volumes: {
           [`${process.env.workdir}/${context.repository}/${context.branch}`]: {},
           [`/tmp/yarn`]: {},
+          [`/root/.ssh`]: {},
         },
         Hostconfig: {
 
           Binds: [
             `yarn:/tmp/yarn`,
+            `/root/.ssh:/root/.ssh`,
             `/var/www/${context.repository}/${context.branch}:${trevor.workdir}/${context.repository}/${context.branch}`,
           ],
         },
