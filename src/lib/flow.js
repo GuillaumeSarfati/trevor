@@ -116,7 +116,6 @@ const flow = (command, payload) => {
       expose(context, done)
     },
     (done) => {
-      if (command === 'pull_request')
       step('Statuses')
       statuses({
        state: "success",

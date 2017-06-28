@@ -11,6 +11,7 @@ const Statuses = (statuses, context, callback) => {
       headers: { 'User-Agent': 'GuillaumeSarfati' },
       json: status
     }, (err, body) => {
+      console.log(body);
       done(err)
     })
   }
