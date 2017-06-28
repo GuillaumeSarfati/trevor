@@ -1,13 +1,9 @@
-FROM ubuntu
+FROM gsarfati/node
 
 EXPOSE 8888
 
 # CREDENTIALS SETUP
 
-RUN apt-get update
-RUN apt-get install git nodejs docker.io npm  -y
-RUN apt-get install curl -y
-RUN ln -s /usr/bin/nodejs /usr/bin/node
 RUN npm install -g babel-cli
 
 # CREDENTIAL SUPPORT
