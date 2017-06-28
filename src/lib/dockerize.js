@@ -70,8 +70,8 @@ const dockerize = (context, callback) => {
         Hostconfig: {
 
           Binds: [
-            `ex7_yarn:/tmp/yarn`,
-            `/Users/guillaume/Documents/xxx/www/${context.repository}/${context.branch}:${trevor.workdir}/${context.repository}/${context.branch}`,
+            `yarn:/tmp/yarn`,
+            `/var/www/${context.repository}/${context.branch}:${trevor.workdir}/${context.repository}/${context.branch}`,
           ],
         },
         ExposedPorts: {

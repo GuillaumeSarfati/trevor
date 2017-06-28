@@ -18,7 +18,7 @@ RUN ssh -o StrictHostKeyChecking=no git@github.com 2>/dev/null; exit 0
 
 # TREVOR SETUP
 COPY src /etc/trevor
-RUN npm install
+RUN cd /etc/trevor && npm install
 
 # SHARED VOLUME
 # VOLUME /var/www
