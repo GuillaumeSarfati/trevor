@@ -1,9 +1,14 @@
-FROM gsarfati/node
+FROM debian
 
 EXPOSE 8888
 
 # CREDENTIALS SETUP
+RUN apt-get update
+RUN apt-get install curl gnupg --yes
 
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
+RUN apt-get update
+RUN apt-get install nodejs git --yes
 RUN npm install -g babel-cli
 
 # CREDENTIAL SUPPORT
