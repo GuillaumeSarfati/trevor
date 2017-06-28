@@ -67,19 +67,16 @@ const flow = (command, payload) => {
         },
         {
           state: "pending",
-          target_url: `http://${context.sha}.faste.ai/`,
           description: "Trevor cloning project...",
           context: "Trevor/clone"
         },
         {
           state: "pending",
-          target_url: `http://${context.sha}.faste.ai/`,
           description: "Trevor dockerizing project...",
           context: "Trevor/docker"
         },
         {
           state: "pending",
-          target_url: `http://${context.sha}.faste.ai/`,
           description: "Trevor running project...",
           context: "Trevor/run-script"
         },
@@ -98,7 +95,6 @@ const flow = (command, payload) => {
     (done) => {
       statuses({
        state: "success",
-       target_url: `http://${context.sha}.faste.ai/`,
        description: "Trevor create context...",
        context: "Trevor/context"
       }, context, done)

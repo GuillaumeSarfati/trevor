@@ -15,7 +15,7 @@ const redirectToDirectory = (context, trevor) => {
             listen 80;
             listen [::]:80;
             root /var/www/${context.repository}/${context.branch};
-            index index.html index.htm index.nginx-debian.html;
+            index ${trevor.hooks[context.command].entrypoint};
 
             server_name ${
               context.command == 'deployment'
