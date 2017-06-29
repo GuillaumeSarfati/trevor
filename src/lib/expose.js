@@ -6,60 +6,50 @@ import parse from './parse';
 
 const docker = new Docker({socketPath: '/tmp/run/docker.sock'});
 
-const redirectToDirectory = (context, trevor) => {
-  console.log('******************');
-  console.log('REDIRECT TO DIRECTORY');
-  console.log('******************');
-  return (`
-    server {
-            listen 80;
-            listen [::]:80;
-            root /var/www/${context.repository}/${context.branch}/${trevor.hooks[context.command].root};
-            index ${trevor.hooks[context.command].entrypoint};
-
-            server_name ${
-              context.command == 'deployment'
-              ? trevor.hooks[context.command].domain
-              : context.sha + '.' + trevor.hooks[context.command].domain
-            };
-
-            location / {
-                    try_files $uri $uri/ =404;
-            }
-    }
-
-  `)
+const generateServerName = (context, trevor) => {
+  if (trevor.hooks[context.command].subdomain)
+    if (trevor.hooks[context.command].subdomain === '$sha')
+      return context.sha + '.' + trevor.hooks[context.command].domain
+    return trevor.hooks[context.command].subdomain + '.' + trevor.hooks[context.command].domain
+  return trevor.hooks[context.command].domain
 }
-const redirectToPort = (context, trevor) => {
-  console.log('******************');
-  console.log('REDIRECT TO PORT');
-  console.log('******************');
-  return (`
-    upstream ${context.command}-${context.sha} {
-          least_conn;
-          server ${context.repository}.${context.branch}:${trevor.hooks[context.command].expose} weight=10 max_fails=3 fail_timeout=30s;
-    }
-    server {
-          listen 80;
-          listen [::]:80;
 
-          server_name ${
-            context.command == 'deployment'
-            ? trevor.hooks[context.command].domain
-            : context.sha + '.' + trevor.hooks[context.command].domain
-          };
+const redirectToDirectory = (context, trevor) => (`
+  server {
+          listen 80 ${trevor.hooks[context.command].defaultServer ? 'default_server' : ''};
+          listen [::]:80;
+          root /var/www/${context.repository}/${context.branch}/${trevor.hooks[context.command].root};
+          index ${trevor.hooks[context.command].entrypoint};
+
+          server_name ${generateServerName(context, trevor)};
 
           location / {
-            proxy_pass http://${context.command}-${context.sha};
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection 'upgrade';
-            proxy_set_header Host $host;
-            proxy_cache_bypass $http_upgrade;
+                  try_files $uri $uri/ =404;
           }
-    }
-  `)
-}
+  }
+`)
+
+const redirectToPort = (context, trevor) => (`
+  upstream ${context.command}-${context.sha} {
+        least_conn;
+        server ${context.repository}.${context.branch}:${trevor.hooks[context.command].expose} weight=10 max_fails=3 fail_timeout=30s;
+  }
+  server {
+        listen 80 ${trevor.hooks[context.command].defaultServer ? 'default_server' : ''};
+        listen [::]:80;
+
+        server_name ${generateServerName(context, trevor)};
+
+        location / {
+          proxy_pass http://${context.command}-${context.sha};
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection 'upgrade';
+          proxy_set_header Host $host;
+          proxy_cache_bypass $http_upgrade;
+        }
+  }
+`)
 // server_names_hash_bucket_size 64;
 const expose = (context, callback) => {
 
@@ -74,7 +64,6 @@ const expose = (context, callback) => {
         network.connect({
           Container: `${context.repository}.${context.branch}`,
         }, (err, data) => {
-          console.log('NETWORK CONNECT : ', err, data);
           done(err, trevor)
 
         })

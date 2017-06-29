@@ -77,13 +77,13 @@ const flow = (command, payload) => {
         },
         {
           state: "pending",
-          description: "Trevor running project...",
-          context: "Trevor/run-script"
+          description: "Trevor running scripts...",
+          context: "Trevor/scripts"
         },
         {
           state: "pending",
           target_url: `http://${context.sha}.faste.ai/`,
-          description: "Trevor expose project...",
+          description: "Trevor exposing project...",
           context: "Trevor/expose"
         },
       ], context, done)
@@ -95,7 +95,7 @@ const flow = (command, payload) => {
     (done) => {
       statuses([{
        state: "success",
-       description: "Trevor create context...",
+       description: "Trevor created context successfully.",
        context: "Trevor/context"
      }], context, done)
     },
@@ -104,12 +104,33 @@ const flow = (command, payload) => {
       init(context, done)
     },
     (done) => {
+      statuses([{
+       state: "success",
+       description: "Trevor cloned the repository successfully.",
+       context: "Trevor/clone"
+     }], context, done)
+    },
+    (done) => {
       step('Dockerize')
       dockerize(context, done)
     },
     (done) => {
+      statuses([{
+       state: "success",
+       description: "Trevor dockerized your project successfully.",
+       context: "Trevor/docker"
+     }], context, done)
+    },
+    (done) => {
       step('Run commands')
       run(context, done)
+    },
+    (done) => {
+      statuses([{
+       state: "success",
+       description: "Trevor buildt your project successfully.",
+       context: "Trevor/scripts"
+     }], context, done)
     },
     (done) => {
       step('Expose')
@@ -120,7 +141,7 @@ const flow = (command, payload) => {
       statuses([{
        state: "success",
        target_url: `http://${context.sha}.faste.ai/`,
-       description: "Trevor is Happy !",
+       description: "Trevor exposed your project successfully.",
        context: "Trevor/expose"
      }], context, done)
     },
