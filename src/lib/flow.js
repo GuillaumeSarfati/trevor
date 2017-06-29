@@ -7,6 +7,7 @@ import init from './init';
 import run from './run';
 import dockerize from './dockerize';
 import expose from './expose';
+import serverName from './serverName';
 
 const flow = (command, payload) => {
   console.time('flow');
@@ -82,7 +83,6 @@ const flow = (command, payload) => {
         },
         {
           state: "pending",
-          target_url: `http://${context.sha}.faste.ai/`,
           description: "Trevor exposing project...",
           context: "Trevor/expose"
         },
@@ -136,11 +136,11 @@ const flow = (command, payload) => {
       step('Expose')
       expose(context, done)
     },
-    (done) => {
+    (trevor, done) => {
       step('Statuses')
       statuses([{
        state: "success",
-       target_url: `http://${context.sha}.faste.ai/`,
+       target_url: `http://${serverName(context, trevor)}`,
        description: "Trevor exposed your project successfully.",
        context: "Trevor/expose"
      }], context, done)
@@ -149,8 +149,7 @@ const flow = (command, payload) => {
     if (err && command === 'pull_request') {
       statuses([{
         state: "error",
-        target_url: `http://${context.sha}.faste.ai/`,
-        description: "Trevor is not Happy !",
+        description: "Trevor can't build your project : " + JSON.stringify(err),
         context: "Trevor/expose"
       }], context, (err, response) => {
         console.log(err, response);

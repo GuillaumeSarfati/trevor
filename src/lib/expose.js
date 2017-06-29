@@ -3,16 +3,11 @@ import { waterfall } from 'async';
 import exec from './execToContainer';
 import Docker from 'dockerode';
 import parse from './parse';
+import serverName from './serverName';
 
 const docker = new Docker({socketPath: '/tmp/run/docker.sock'});
 
-const generateServerName = (context, trevor) => {
-  if (trevor.hooks[context.command].subdomain)
-    if (trevor.hooks[context.command].subdomain === '$sha')
-      return context.sha + '.' + trevor.hooks[context.command].domain
-    return trevor.hooks[context.command].subdomain + '.' + trevor.hooks[context.command].domain
-  return trevor.hooks[context.command].domain
-}
+
 
 const redirectToDirectory = (context, trevor) => (`
   server {
@@ -21,7 +16,7 @@ const redirectToDirectory = (context, trevor) => (`
           root /var/www/${context.repository}/${context.branch}/${trevor.hooks[context.command].root};
           index ${trevor.hooks[context.command].entrypoint};
 
-          server_name ${generateServerName(context, trevor)};
+          server_name ${serverName(context, trevor)};
 
           location / {
                   try_files $uri $uri/ =404;
@@ -38,7 +33,7 @@ const redirectToPort = (context, trevor) => (`
         listen 80 ${trevor.hooks[context.command].defaultServer ? 'default_server' : ''};
         listen [::]:80;
 
-        server_name ${generateServerName(context, trevor)};
+        server_name ${serverName(context, trevor)};
 
         location / {
           proxy_pass http://${context.command}-${context.sha};
@@ -84,8 +79,8 @@ const expose = (context, callback) => {
       }
 
 
-    ], (err) => {
-      callback(err);
+    ], (err, trevor) => {
+      callback(err, trevor);
     });
 };
 
