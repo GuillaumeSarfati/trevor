@@ -37,6 +37,7 @@ const dockerize = (context, callback) => {
         docker.modem.followProgress(stream, onFinished, onProgress);
 
         function onFinished(err, output) {
+          console.log('ERR X ', err);
           done(err, trevor);
         }
         function onProgress(event) {
@@ -50,6 +51,16 @@ const dockerize = (context, callback) => {
 
       console.log(`VOLUME : ${process.env.workdir}/${context.repository}/${context.branch}`);
       console.log(`BIND VOLUME : ${process.env.workdir}:${trevor.workdir}/${context.repository}/${context.branch}`);
+      let Binds = [
+        `yarn:/tmp/yarn`,
+        `/root/.ssh:/root/.ssh`,
+        `/var/www/${context.repository}/${context.branch}:${trevor.workdir}/${context.repository}/${context.branch}`,
+      ]
+
+      if (context.repository === 'faste-api') {
+        Binds.push(`/var/www/:/var/_www`)
+      }
+
       docker.createContainer({
         name: `${context.repository}.${context.branch}`,
         Image: trevor.image,
@@ -68,17 +79,7 @@ const dockerize = (context, callback) => {
           [`/tmp/yarn`]: {},
           [`/root/.ssh`]: {},
         },
-        Hostconfig: {
-
-          Binds: [
-            `yarn:/tmp/yarn`,
-            `/root/.ssh:/root/.ssh`,
-            `/var/www/${context.repository}/${context.branch}:${trevor.workdir}/${context.repository}/${context.branch}`,
-            context.repository === 'faste-api'
-            ? `/var/www/:/var/_www`
-            : null
-          ],
-        },
+        Hostconfig: { Binds },
         ExposedPorts: {
           [`${trevor.hooks[context.command].expose}/tcp`]: { }
         },
@@ -90,7 +91,10 @@ const dockerize = (context, callback) => {
     (container, done) => {
       done()
     },
-  ], (err) => callback(err))
+  ], (err) => {
+    console.log('FINAL ERR : ', err)
+    callback(err)
+  })
 }
 
 export default dockerize;
