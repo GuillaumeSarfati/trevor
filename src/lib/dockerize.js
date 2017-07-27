@@ -73,9 +73,10 @@ const dockerize = (context, callback) => {
           Binds: [
             `yarn:/tmp/yarn`,
             `/root/.ssh:/root/.ssh`,
-            context.repository !== 'faste-api'
-            ? `/var/www/${context.repository}/${context.branch}:${trevor.workdir}/${context.repository}/${context.branch}`,
-            : `/var/www/:/var/www`
+            `/var/www/${context.repository}/${context.branch}:${trevor.workdir}/${context.repository}/${context.branch}`,
+            context.repository === 'faste-api'
+            ? `/var/www/:/var/_www`
+            : null
           ],
         },
         ExposedPorts: {
