@@ -64,6 +64,9 @@ const expose = (context, callback) => {
         })
       },
       (trevor, done) => {
+        console.log('*******************************');
+        console.log('SERVER NAME : ', serverName(context, trevor));
+        console.log('*******************************');
         fs.writeFile(`/etc/nginx/conf.d/${context.repository}.${context.branch}.conf`
         , trevor.hooks[context.command].expose
           ? redirectToPort(context, trevor)
